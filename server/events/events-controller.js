@@ -1,7 +1,7 @@
 var mongo = require('mongodb').MongoClient
 var ObjectID = require('mongodb').ObjectID;
 var jwt  = require('jwt-simple');
-var db = require('./db/db.js')
+var db = require('../db/db.js')
 
 
 module.exports = {
@@ -35,14 +35,14 @@ module.exports = {
     var event = req.body.event;
     var userToken = req.body.token;
     var username = jwt.decode(userToken, 'secret');
-    var foundUser = db.collection('corgiuser').find( {name: username} );
+    var foundUser = db.get('corgiuser').find( {name: username} );
     foundUser.on('data', function (user) {
       var userInfo = {
         username: user.name
       };
       event.creatorID = user._id.toString();
       event.attendeeIDs = [userInfo];
-  		db.collection('corgievent').insert(event);
+  		db.get('corgievent').insert(event);
       res.json(event);
     });
 	},
@@ -52,9 +52,23 @@ module.exports = {
     var userToken = req.body.token;
     console.log('eventID: ', eventID);
     var username = jwt.decode(userToken, 'secret');
-    var foundUser = db.collection('corgiuser').find( {name: username} );
-    foundUser.on('data', function (user) {
-      db.collection('corgievent').update({_id: ObjectID(eventID)}, { $addToSet: {attendeeIDs: {username: user.name} } });
+    var promise = db.get('corgiuser').find( {name: username} );
+    promise.on('complete', function (err, user) {
+      console.log('oustide', user)
+      db.get('corgievent').find({_id: eventID}, function (err, event) {
+        var inList = false;
+        console.log('event',event[0].attendeeIDs)
+        event[0].attendeeIDs.forEach(function (attendee){
+          console.log('username', user)
+          if (attendee.username === user[0].name){
+            inList = true;
+          }
+        });
+        if (!inList) {
+
+          event[0].attendeeIDs.push({username: user[0].name})
+        }
+      })
       res.end();
     });
 
