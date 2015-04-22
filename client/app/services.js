@@ -28,7 +28,7 @@ angular.module('lunchCorgi.services', [])
       .then(function (resp) {
         //probably superfluous, but maybe handy for debugging for now - 04/16/2015 - saf
         //alert("You were added to event ", event.description)
-        return resp.statusCode; 
+        return resp.statusCode;
       });
   }
 
@@ -60,6 +60,7 @@ angular.module('lunchCorgi.services', [])
     zoom: 10,
     center: {}
   }
+
   var eventDetails = function(evt){
     event = evt;
   }
@@ -72,7 +73,11 @@ angular.module('lunchCorgi.services', [])
     var coords = new google.maps.LatLng(latitude, longitude);
     mapOptions.center = coords;
     var map = new google.maps.Map(document.getElementById(divId), mapOptions);
-    var marker = new google.maps.Marker({position: coords, map: map});
+    if (divId === 'map-submit'){
+      var marker = new google.maps.Marker({position: coords, map: map, draggable: true});
+    } else {
+      var marker = new google.maps.Marker({position: coords, map: map});
+    }
   }
 
   return {
