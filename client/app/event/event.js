@@ -22,18 +22,15 @@ angular.module('lunchCorgi.event', [])
 
   $scope.createMap();
 });
-
-
-.controller('chatCtrl',function($scope,Event){
-  $scope.chats=[];
-  $scope.init =function(){
-    loadchats()
-  
-  }
-  $scope.loadchats = function(){
-    Event.loadEvent($scope);
-    $scope.chat = Event.getChat($scope.event);
-    setTimeout({console.log($scope.chats)},100);
-  }
-  $scope.init()
+}
+$scope.init =function(){
+$scope.loadchats()
+}
+$scope.sendmessage =function(){
+var userToken = $window.localStorage.getItem('com.corgi')
+Event.sendChat(userToken,$scope.textinput,function(){
+$scope.loadchats();
+})
+}
+$scope.init()
 })
