@@ -28,7 +28,7 @@ angular.module('lunchCorgi.services', [])
       .then(function (resp) {
         //probably superfluous, but maybe handy for debugging for now - 04/16/2015 - saf
         //alert("You were added to event ", event.description)
-        return resp.statusCode; 
+        return resp.statusCode;
       });
   }
 

@@ -1,12 +1,18 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var path = require('path');
+var mongo = require ('mongodb');
+var monk = require('monk');
 
 var app = express();
-// we just assign the port in the connection in each controller
-// var port = /*process.env.PORT || */ 8000; //dynamic port assignment for deployment purposes
-var __
+var db = require('./db/db.js')
+
 app.use(express.static(__dirname + '/..'));
+
+app.use(function (req, res, next) {
+  req.db = db;
+  next();
+});
 
 app.get("/", function (req, res) {
   res.sendFile('index.html', {root: __dirname + '/../client/app'});
